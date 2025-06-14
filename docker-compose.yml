@@ -1,0 +1,43 @@
+version: "3"
+services:
+  db:
+    image: postgres
+    networks:
+      - todo-net
+    ports:
+      - 154432:5432
+    restart: always
+    env_file:
+      - ./env/db.env
+    volumes:
+      # dbディレクトリのSQLを初期投入
+      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "psql -U postgres -d todo || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  api:
+    depends_on:
+      db:
+        conditions: services_healthy
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - todo-net
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - todo-net
+
+networks:
+  todo-net:
+volumes:
