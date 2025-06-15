@@ -1,4 +1,3 @@
-version: "3"
 services:
   db:
     image: postgres
@@ -10,9 +9,8 @@ services:
     env_file:
       - ./env/db.env
     volumes:
-      # dbディレクトリのSQLを初期投入
       - ./db:/docker-entrypoint-initdb.d
-    healthcheck:
+    healthcheck: # 接続確認
       test: ["CMD-SHELL", "psql -U postgres -d todo || exit 1"]
       interval: 30s
       timeout: 5s
@@ -26,7 +24,14 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+    port:
+      - 8080:8080 # portは一旦8080
     restart: always
+    tty: true
+    volumes:
+      - ./api:/app/api
+    working_dir: /app/api
+    command: ./gradlew bootRun # ビルドと実行
     networks:
       - todo-net
 
@@ -35,6 +40,10 @@ services:
       context: ./front
       dockerfile: Dockerfile
     restart: always
+    tty: true
+    volumes:
+      - ./front:/app/front
+    working_dir: /app/front
     networks:
       - todo-net
 
