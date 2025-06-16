@@ -9,7 +9,7 @@ services:
     env_file:
       - ./env/db.env
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
+      - ./db:/docker-entrypoint-initdb.d # TODO 初期投入するSQLファイルを追加する
     healthcheck: # 接続確認
       test: ["CMD-SHELL", "psql -U postgres -d todo || exit 1"]
       interval: 30s
@@ -43,7 +43,10 @@ services:
     tty: true
     volumes:
       - ./front:/app/front
+      - node_modules:/app/front/node_modules
     working_dir: /app/front
+    port:
+      - 3000:3000
     networks:
       - todo-net
 
