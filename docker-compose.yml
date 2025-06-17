@@ -4,12 +4,13 @@ services:
     networks:
       - todo-net
     ports:
-      - 154432:5432
+      - 5432:5432
     restart: always
     env_file:
       - ./env/db.env
     volumes:
-      - ./db:/docker-entrypoint-initdb.d # TODO 初期投入するSQLファイルを追加する
+      - ./db:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
     healthcheck: # 接続確認
       test: ["CMD-SHELL", "psql -U postgres -d todo || exit 1"]
       interval: 30s
@@ -24,14 +25,14 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    port:
-      - 8080:8080 # portは一旦8080
+    ports:
+      - 8080:8080
     restart: always
-    tty: true
+    env_file:
+      - ./env/api.env
     volumes:
-      - ./api:/app/api
-    working_dir: /app/api
-    command: ./gradlew bootRun # ビルドと実行
+      - ./api:/app
+      - maven_cache:/root/.m2
     networks:
       - todo-net
 
@@ -40,12 +41,10 @@ services:
       context: ./front
       dockerfile: Dockerfile
     restart: always
-    tty: true
     volumes:
-      - ./front:/app/front
-      - node_modules:/app/front/node_modules
-    working_dir: /app/front
-    port:
+      - ./front:/app
+      - node_modules:/app/node_modules
+    ports:
       - 3000:3000
     networks:
       - todo-net
@@ -53,3 +52,6 @@ services:
 networks:
   todo-net:
 volumes:
+  postgres_data:  # データベースの永続化用ボリューム
+  maven_cache:    # Mavenキャッシュ用ボリューム
+  node_modules:   # Node.jsの依存関係用ボリューム
