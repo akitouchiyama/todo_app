@@ -54,3 +54,24 @@ yarn-error.log*
 *.tmp
 *.temp
 *~
+
+# Frontend (Node.js)
+front/node_modules/
+front/.env
+front/.env.local
+front/.env.development.local
+front/.env.test.local
+front/.env.production.local
+front/build/
+front/dist/
+
+# Backend (Java/Maven)
+api/target/
+api/.mvn/wrapper/maven-wrapper.jar
+api/.mvn/wrapper/maven-wrapper.properties
+
+# Database files
+db/data/
+*.db
+*.sqlite
+*.sqlite3
