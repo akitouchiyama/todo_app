@@ -1,0 +1,195 @@
+# Todo App Development Rules
+
+## 📋 開発ワークフロー
+
+### 🔍 静的解析の実行
+
+**重要**: コードを変更した際は、必ず静的解析を実行してください。
+
+#### Frontend (React/TypeScript)
+```bash
+cd front
+npm run lint  # ESLint実行
+# または
+npx eslint src/ --fix  # 自動修正付きESLint
+```
+
+#### Backend (Java/Spring Boot)
+```bash
+cd api
+./mvnw checkstyle:check pmd:check  # 静的解析実行
+```
+
+### 📝 開発前のチェックリスト
+
+1. **コード変更後**
+   - [ ] Frontend: `npm run lint` (frontディレクトリ)
+   - [ ] Backend: `./mvnw checkstyle:check pmd:check` (apiディレクトリ)
+
+2. **コミット前**
+   - [ ] 静的解析エラーがないことを確認
+   - [ ] 警告の内容を確認し、必要に応じて修正
+
+3. **プルリクエスト前**
+   - [ ] 全ての静的解析ツールが成功することを確認
+
+### ⚠️ 静的解析エラーの対応
+
+#### Frontend (ESLint)
+- **警告**: TypeScriptのバージョン互換性警告は無視可能
+- **エラー**: 実際のコード問題は修正が必要
+
+#### Backend (Checkstyle + PMD)
+- **Checkstyle**: コーディング規約違反（インデント、Javadoc等）
+- **PMD**: コード品質問題（未使用変数、複雑度等）
+- 現在設定: `failOnError=false` のため警告として表示
+
+### 🛠️ 設定済みツール
+
+#### Frontend
+- **ESLint** + **TypeScript ESLint Plugin**
+- 設定: React App標準 + TypeScript拡張
+
+#### Backend  
+- **Checkstyle**: Google Java Style Guide
+- **PMD**: ベストプラクティス + エラー検出 + パフォーマンス
+
+### 📊 レポート確認
+
+#### Frontend
+- ESLintはコンソール出力で結果表示
+
+#### Backend
+- `api/target/checkstyle-result.xml` - Checkstyle結果
+- `api/target/pmd.xml` - PMD結果
+
+### 🎯 品質目標
+
+- **Frontend**: ESLintエラー 0件
+- **Backend**: 重要な警告の解決
+- **全体**: 読みやすく保守しやすいコード
+
+---
+
+## 💡 その他の開発ルール
+
+### ディレクトリ構造
+```
+todo_app/
+├── front/     # React/TypeScript frontend
+├── api/       # Spring Boot backend  
+├── db/        # Database scripts
+└── env/       # Environment configs
+```
+
+### Git Branch Strategy
+
+#### ブランチ構成
+- `main`: 本番用ブランチ（常にリリース可能な状態）
+- `feature/*`: 機能開発ブランチ（1機能・修正単位で作成）
+
+#### ブランチ命名規則
+
+**1機能・修正単位で1つのブランチを作成**
+
+##### プリフィックス
+- `feat/`: 新規機能開発
+- `fix/`: 機能改善・バグ修正
+- `hotfix/`: 緊急の本番バグ修正
+- `refactor/`: リファクタリング
+- `perf/`: パフォーマンス改善
+- `test/`: テスト追加・修正
+- `docs/`: ドキュメントのみの変更
+- `style/`: コードスタイル修正（フォーマット等）
+- `chore/`: ビルドツール・ライブラリの自動生成物
+
+##### 命名例
+```
+feat/user-authentication
+fix/login-button-validation
+hotfix/security-vulnerability
+refactor/api-service-structure
+perf/database-query-optimization
+test/user-service-unit-tests
+docs/api-documentation-update
+style/eslint-formatting-fixes
+chore/dependency-updates
+```
+
+#### 開発フロー
+
+1. **ブランチ作成**
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout -b feat/your-feature-name
+   ```
+
+2. **開発・コミット**
+   ```bash
+   # 静的解析実行
+   cd front && npm run lint
+   cd ../api && ./mvnw checkstyle:check pmd:check
+   
+   # コミット
+   git add .
+   git commit -m "feat: add user authentication functionality"
+   ```
+
+3. **プッシュ・プルリクエスト**
+   ```bash
+   git push origin feat/your-feature-name
+   # GitHubでmain <- feat/your-feature-nameのPRを作成
+   ```
+
+4. **マージ後のクリーンアップ**
+   ```bash
+   git checkout main
+   git pull origin main
+   git branch -d feat/your-feature-name  # ローカルブランチ削除
+   ```
+
+#### コミットメッセージ規則
+
+**形式**: `<type>: <description>`
+
+##### Type
+- `feat`: 新機能
+- `fix`: バグ修正
+- `docs`: ドキュメント
+- `style`: フォーマット
+- `refactor`: リファクタリング
+- `test`: テスト
+- `chore`: その他
+
+##### 例
+```
+feat: add user login functionality
+fix: resolve validation error on signup form
+docs: update API documentation
+style: format code with prettier
+refactor: extract authentication service
+test: add unit tests for user service
+chore: update dependencies
+```
+
+#### プルリクエスト規則
+
+1. **作成前チェック**
+   - [ ] 静的解析が全てパス
+   - [ ] テストが全てパス
+   - [ ] コンフリクトがない
+
+2. **PR説明に含める**
+   - 変更内容の概要
+   - 影響範囲
+   - テスト方法
+   - スクリーンショット（UI変更時）
+
+3. **レビュー後マージ**
+   - 最低1人のレビュー承認
+   - Squash and mergeを推奨
+
+### Docker Compose
+- 開発環境: `docker-compose up`
+- 本番環境: 各サービス個別にDockerfile使用 
