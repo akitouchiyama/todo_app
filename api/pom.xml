@@ -102,8 +102,8 @@
 					<configLocation>google_checks.xml</configLocation>
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
-					<failsOnError>false</failsOnError>
-					<violationSeverity>warning</violationSeverity>
+					<failsOnError>true</failsOnError>
+					<violationSeverity>error</violationSeverity>
 				</configuration>
 			</plugin>
 			
@@ -118,7 +118,7 @@
 						<ruleset>/category/java/errorprone.xml</ruleset>
 						<ruleset>/category/java/performance.xml</ruleset>
 					</rulesets>
-					<failOnViolation>false</failOnViolation>
+					<failOnViolation>true</failOnViolation>
 					<printFailingErrors>true</printFailingErrors>
 				</configuration>
 			</plugin>
