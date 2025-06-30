@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres
+    networks:
+      - todo-net
+    ports:
+      - 5432:5432
+    restart: always
+    env_file:
+      - ./env/db.env
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck: # 接続確認
+      test: ["CMD-SHELL", "psql -U postgres -d todo || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  api:
+    depends_on:
+      db:
+        conditions: services_healthy
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    restart: always
+    env_file:
+      - ./env/api.env
+    volumes:
+      - ./api:/app
+      - maven_cache:/root/.m2
+    networks:
+      - todo-net
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./front:/app
+      - node_modules:/app/node_modules
+    ports:
+      - 3000:3000
+    networks:
+      - todo-net
+
+networks:
+  todo-net:
+volumes:
+  postgres_data:  # データベースの永続化用ボリューム
+  maven_cache:    # Mavenキャッシュ用ボリューム
+  node_modules:   # Node.jsの依存関係用ボリューム
