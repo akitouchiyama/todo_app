@@ -9,6 +9,9 @@ COPY package*.json ./
 # 依存関係をインストール
 RUN npm install
 
+# アプリケーションのコードをコピー
+COPY . .
+
 # ポート3000でアプリケーションを実行
 EXPOSE 3000
 

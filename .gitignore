@@ -23,9 +23,6 @@
 hs_err_pid*
 replay_pid*
 
-# Docker
-.dockerignore
-
 # Environment files
 env/*.env
 !env/*.env.example
@@ -67,8 +64,6 @@ front/dist/
 
 # Backend (Java/Maven)
 api/target/
-api/.mvn/wrapper/maven-wrapper.jar
-api/.mvn/wrapper/maven-wrapper.properties
 
 # Database files
 db/data/
