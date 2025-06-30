@@ -28,7 +28,7 @@ cd api
 
 2. **コミット前**
    - [ ] 静的解析エラーがないことを確認
-   - [ ] 警告の内容を確認し、必要に応じて修正
+   - [ ] 品質違反は修正が必須（ビルドが失敗するため）
 
 3. **プルリクエスト前**
    - [ ] 全ての静的解析ツールが成功することを確認
@@ -42,7 +42,7 @@ cd api
 #### Backend (Checkstyle + PMD)
 - **Checkstyle**: コーディング規約違反（インデント、Javadoc等）
 - **PMD**: コード品質問題（未使用変数、複雑度等）
-- 現在設定: `failOnError=false` のため警告として表示
+- 現在設定: `failOnError=true` のため品質違反でビルド失敗
 
 ### 🛠️ 設定済みツール
 
@@ -66,7 +66,7 @@ cd api
 ### 🎯 品質目標
 
 - **Frontend**: ESLintエラー 0件
-- **Backend**: 重要な警告の解決
+- **Backend**: Checkstyle・PMDエラー 0件
 - **全体**: 読みやすく保守しやすいコード
 
 ---
@@ -77,7 +77,8 @@ cd api
 ```
 todo_app/
 ├── front/     # React/TypeScript frontend
-├── api/       # Spring Boot backend  
+├── api/       # Spring Boot backend (MyBatis使用)
+│   └── src/main/resources/mapper/  # MyBatis XMLマッパー
 ├── db/        # Database scripts
 └── env/       # Environment configs
 ```
